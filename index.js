@@ -36,11 +36,11 @@ module.exports = function VSGuide(mod) {
             1701: {msg: "Back + Stab"},
             
             // Normal
-            1404: {msg: '(Marks) Debuff (closest)',    next: 3103,    prev: 1301},
+            1404: {msg: '(Debuffs) Closest',           next: 3103,    prev: 1301},
             3103: {msg: '(Circles) Spread',            next: 1301,    prev: 1404},
             1301: {msg: '(Bombs) Gather + cleanse',    next: 1404,    prev: 3103},
             // Inversed
-            1405: {msg: '(Marks) Debuff (farthest)',   next: 3104,    prev: 1302},
+            1405: {msg: '(Debuffs) Farthest',          next: 3104,    prev: 1302},
             3104: {msg: '(Circles) Gather',            next: 1302,    prev: 1405},
             1302: {msg: '(Bombs) Gather + no cleanse', next: 1405,    prev: 3104},
             
@@ -157,9 +157,6 @@ module.exports = function VSGuide(mod) {
     });
     
     mod.game.me.on('change_zone', (zone, quick) => { 
-    
-        console.log('zone: ' + zone);
-    
         if (mapIDs.includes(zone)) {
             if (!insidemap) {
                 mod.command.message('Welcome to Velik\'s Sanctuary '.clr('56B4E9') + (mapIDs[0] === zone ? '[NM]'.clr('E69F00') : mapIDs[1] === zone ? '[HM]'.clr('00FFFF') : ''));
@@ -306,7 +303,7 @@ module.exports = function VSGuide(mod) {
                 if (!bossInfo) return;
                 if (event.stage != 0) return;
 
-                if (event.templateId == 3000) mod.command.message('skill:   ' + event.skill.id);
+                //if (event.templateId == 3000) mod.command.message('skill:   ' + event.skill.id);
                 
                 if (!BossActions[event.templateId]) return;
                 
