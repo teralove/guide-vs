@@ -3,11 +3,10 @@ Guide for Velik's Sanctuary (WIP)
 
 ## Commands
 ### `vs [off/on]`
-- Toggle off/on
-- Default is on
+- Toggle modules off/on
 
 ### `vs notices [off/on]`
-- Toggle off/on (Default ON)
+- Guide messages as party notices (otherwise as proxy messages)
 
 ### `vs items [off/on]`
-- Toggle off/on (Default ON)
+- Show items and flowers during boss animations
