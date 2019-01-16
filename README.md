@@ -3,7 +3,7 @@ Guide for Velik's Sanctuary (WIP)
 
 ## Commands
 ### `vs [off/on]`
-- Toggle modules off/on
+- Toggle module off/on
 
 ### `vs notices [off/on]`
 - Guide messages as party notices (otherwise as proxy messages)
