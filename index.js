@@ -27,8 +27,8 @@ module.exports = function VSGuide(mod) {
             1152: {msg: 'Stun + Back'},
             //1154: {msg: 'Out + In', func: BegoneOutIn},
             //1155: {msg: 'In + Out', func: BegoneInOut},
-            1144: {msg: 'Get Out', func: BegoneRange},
-            1145: {msg: 'Get In', func: BegoneRange}, // Red
+            1144: {msg: 'Get Out'}, //func: BegoneRange},
+            1145: {msg: 'Get In'}, //func: BegoneRange}, // Red
             
             1240: {msg: 'Donuts'},
             1401: {msg: 'Plague/Regress'},     // Shield normal to inverse
@@ -57,9 +57,14 @@ module.exports = function VSGuide(mod) {
 
     //MessageId: BossAction
     const BossMessages = {
+        // NM
         9781043: 1404,   // Lakan has noticed you.
         9781044: 3103,   // Lakan is trying to take you on one at a time.	
         9781045: 1301,   // Lakan intends to kill all of you at once.
+        // HM
+        9981043: 1404,   // Lakan has noticed you.
+        9981044: 3103,   // Lakan is trying to take you on one at a time.	
+        9981045: 1301,   // Lakan intends to kill all of you at once.
     }
     
     // Lakan stuff  
@@ -73,7 +78,7 @@ module.exports = function VSGuide(mod) {
     }   
     
     
-    const LakanNextMessageDelay = 5000;
+    const LakanNextMessageDelay = 4000;
     const ShieldWarningTime = 80000; //ms
     const ShieldWarningMessage = 'Ring soon';
     const LakanLaserSafespots = [18, 54, 90, 126, 162, 198, 234, 270, 306, 342];
@@ -83,13 +88,13 @@ module.exports = function VSGuide(mod) {
     const Collection_Ids = [445, 548];
    
 	let hooks = [],
-        enabled = config.enabled,
+        enabled = true,
+        showItems = true,
+        sendNotices = true,
+        showOnlyLakanMech = false,
+
         insidemap = false,
-//        streamMode = config.streamMode,
-        showItems = config.showItems,
-        sendNotices = config.sendNotices,
-        bossInfo = undefined,
-        
+        bossInfo = undefined,        
         timers = {},
         bossLoc = undefined,
         flowerId = 999999999,
@@ -163,6 +168,7 @@ module.exports = function VSGuide(mod) {
             }
             insidemap = true;
             load();
+            configInit();
         } else {
             insidemap = false;
             unload();
@@ -302,9 +308,10 @@ module.exports = function VSGuide(mod) {
             hook('S_ACTION_STAGE', 8, (event) => {         
                 if (!bossInfo) return;
                 if (event.stage != 0) return;
-
-                //if (event.templateId == 3000) mod.command.message('skill:   ' + event.skill.id);
+                if (showOnlyLakanMech && ![1404, 3103, 1301, 1405, 3104, 1302].includes(event.skill.id)) return;
                 
+//                if ([1000, 2000, 3000].includes(event.templateId)) mod.command.message('skill:   ' + event.skill.id);
+
                 if (!BossActions[event.templateId]) return;
                 
                 let bossAction = BossActions[event.templateId][event.skill.id];
@@ -358,10 +365,11 @@ module.exports = function VSGuide(mod) {
                 if (!bossInfo) return;
                 
                 let msgId = parseInt(event.message.replace('@dungeon:', ''));
+/*
                 if (bossInfo.templateId === 3000) {
                     mod.command.message('msgID: ' + msgId);
                 }
-                
+*/                
                 if (BossMessages[msgId]) {
                     for (let timer in timers) {
                         if (timer) clearTimeout(timer);
@@ -393,5 +401,12 @@ module.exports = function VSGuide(mod) {
 	function hook() {
 		hooks.push(mod.hook(...arguments))
 	}
-        
+    
+    function configInit() {
+        if (config) {
+            ({enabled,sendNotices,showItems,showOnlyLakanMech} = config);
+        } else {
+            mod.command.message("(vs-guide) Error: Unable to load config.json - Using default values for now");
+        }
+    } 
 }
