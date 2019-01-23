@@ -7,7 +7,7 @@ module.exports = function VSGuide(mod) {
     const BossActions = {
         // Darkan
         1000: {
-            1113: {msg: 'Front + Circle/Donut'},    
+            1113: {msg: 'Front + AoEs'},    
             1304: {func: DarkanInOutRange},        
         },     
         // Dakuryon
