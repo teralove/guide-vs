@@ -7,30 +7,13 @@ module.exports = function VSGuide(mod) {
     const BossActions = {
         // Darkan
         1000: {
-            //1304: {msg: 'IN/OUT MECH'},
-            1304: {func: DarkanInOutRange},
-            //1401: {msg: 'Left'},
-            //1402: {msg: 'Right'},
-            1302: {msg: 'Run Away'},
-            //1303: {msg: 'Drill'},
-            2117: {msg: 'Destroy Pylons'},
-            //1309: {msg: 'In'},
-            //1308: {msg: 'Out'},
-            1113: {msg: 'Front'},            
+            1113: {msg: 'Front + Circle/Donut'},    
+            1304: {func: DarkanInOutRange},        
         },     
         // Dakuryon
         2000: {
-            //1302: {msg: 'Selected'},
-            //1131: {msg: 'Left'},
-            //1135: {msg: 'Stab > Slash > Out'},
-            //1130: {msg: 'Right'},
-            //1106: {msg: 'Back'},
-            1121: {msg: 'Kill Mobs'},
-            1505: {msg: 'Cage inc'},
-            //4000: {msg: 'AoE Mech'},
-            1134: {msg: 'Drag > Smash'},
-            //1503: {msg: 'Shield'},       
-        },                   
+            1134: {msg: 'Pull + Smash'},
+        },
         // Lakan
         3000: {
             //1101: {msg: 'Auto'},
