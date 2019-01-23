@@ -11,8 +11,8 @@
         "settingsFile": "config.json",
         "settingsMigrator": "settings_migrator.js"        
     },
-    "servers": ["https://raw.githubusercontent.com/teralove/vs-guide/master/"],
-    "supportUrl": "https://github.com/teralove/vs-guide/issues",
+    "servers": ["https://raw.githubusercontent.com/teralove/guide-vs/master/"],
+    "supportUrl": "https://github.com/teralove/guide-vs/issues",
     "dependencies": {
         "tera-game-state": "https://raw.githubusercontent.com/caali-hackerman/tera-game-state/master/module.json"
     }
