@@ -1,5 +1,5 @@
 # vs-guide
-Guide for Velik's Sanctuary (WIP)
+Guide for Velik's Sanctuary
 
 ## Commands
 ### `vs [off/on]`

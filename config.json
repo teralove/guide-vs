@@ -1,6 +1,9 @@
-{	
-    "enabled": true,
-    "sendNotices": true,
-    "showItems": true,
-    "showOnlyLakanMech": false
+{
+    "version": 1,
+    "data": {
+        "enabled": true,
+        "sendNotices": true,
+        "showItems": true,
+        "showOnlyLakanMech": false
+    }
 }

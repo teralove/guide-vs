@@ -1,19 +1,35 @@
 String.prototype.clr = function (hexColor) { return `<font color='#${hexColor}'>${this}</font>` };
 
 module.exports = function VSGuide(mod) {	
-	const config = require('./config.json');
     const mapIDs = [9781, 9981]; 
-    //const {BossActions, BossMessages, InversedAction} = require('./skills');
-    
+
     // BossAction[TempalateId][Skill.id]
     const BossActions = {
         // Darkan
         1000: {
-            //1111: {msg: 'test'},
+            //1304: {msg: 'IN/OUT MECH'},
+            1304: {func: DarkanInOutRange},
+            //1401: {msg: 'Left'},
+            //1402: {msg: 'Right'},
+            1302: {msg: 'Run Away'},
+            //1303: {msg: 'Drill'},
+            2117: {msg: 'Destroy Pylons'},
+            //1309: {msg: 'In'},
+            //1308: {msg: 'Out'},
+            1113: {msg: 'Front'},            
         },     
         // Dakuryon
         2000: {
-            //1111: {msg: 'test'},
+            //1302: {msg: 'Selected'},
+            //1131: {msg: 'Left'},
+            //1135: {msg: 'Stab > Slash > Out'},
+            //1130: {msg: 'Right'},
+            //1106: {msg: 'Back'},
+            1121: {msg: 'Kill Mobs'},
+            1505: {msg: 'Cage inc'},
+            //4000: {msg: 'AoE Mech'},
+            1134: {msg: 'Drag > Smash'},
+            //1503: {msg: 'Shield'},       
         },                   
         // Lakan
         3000: {
@@ -23,12 +39,9 @@ module.exports = function VSGuide(mod) {
             1136: {msg: 'Claw'},
             1138: {func: BegoneRange}, // Begone
             1148: {msg: 'Barrage'},
-            //1149: {msg: 'Barrage'},
             1152: {msg: 'Stun + Back'},
-            //1154: {msg: 'Out + In', func: BegoneOutIn},
-            //1155: {msg: 'In + Out', func: BegoneInOut},
-            1144: {msg: 'Get Out'}, //func: BegoneRange},
-            1145: {msg: 'Get In'}, //func: BegoneRange}, // Red
+            1144: {msg: 'Get Out'}, 
+            1145: {msg: 'Get In'},
             
             1240: {msg: 'Donuts'},
             1401: {msg: 'Plague/Regress'},     // Shield normal to inverse
@@ -40,18 +53,9 @@ module.exports = function VSGuide(mod) {
             3103: {msg: '(Circles) Spread',            next: 1301,    prev: 1404},
             1301: {msg: '(Bombs) Gather + cleanse',    next: 1404,    prev: 3103},
             // Inversed
-            1405: {msg: '(Debuffs) Farthest',          next: 3104,    prev: 1302},
-            3104: {msg: '(Circles) Gather',            next: 1302,    prev: 1405},
-            1302: {msg: '(Bombs) Gather + no cleanse', next: 1405,    prev: 3104},
-            
-            // Normal
-            //1901: {msg: '(Marks) Debuff (closest)',    next: 1905,    prev: 1903,   func: LaserStarNormal},
-            //1905: {msg: '(Circles) Spread',            next: 1903,    prev: 1901,   func: LaserStarNormal},
-            //1903: {msg: '(Bombs) Gather + cleanse',    next: 1901,    prev: 1905,   func: LaserStarNormal},
-            // Inversed
-           // 1902: {msg: '(Marks) Debuff (farthest)',   next: 1906,    prev: 1904,   func: LaserStarInverted},
-           // 1906: {msg: '(Circles) Gather',            next: 1904,    prev: 1902,   func: LaserStarInverted},
-            //1904: {msg: '(Bombs) Gather + no cleanse', next: 1902,    prev: 1906,   func: LaserStarInverted},
+            1405: {msg: '(Debuffs) Farthest',          next: 3105,    prev: 1302},
+            3105: {msg: '(Circles) Gather',            next: 1302,    prev: 1405},
+            1302: {msg: '(Bombs) Gather + no cleanse', next: 1405,    prev: 3105},
         },
     }
 
@@ -70,13 +74,12 @@ module.exports = function VSGuide(mod) {
     // Lakan stuff  
     const InversedAction = {
         1404: 1405,
-        3103: 3104,
+        3103: 3105,
         1301: 1302,
         1405: 1404,
-        3104: 3103,
+        3105: 3103,
         1302: 1301
-    }   
-    
+    }       
     
     const LakanNextMessageDelay = 4000;
     const ShieldWarningTime = 80000; //ms
@@ -88,11 +91,6 @@ module.exports = function VSGuide(mod) {
     const Collection_Ids = [445, 548];
    
 	let hooks = [],
-        enabled = true,
-        showItems = true,
-        sendNotices = true,
-        showOnlyLakanMech = false,
-
         insidemap = false,
         bossInfo = undefined,        
         timers = {},
@@ -113,51 +111,54 @@ module.exports = function VSGuide(mod) {
         if (arg2) arg2 = arg2.toLowerCase();
         
         if (arg === undefined) {
-            enabled = !enabled;
+            mod.settings.enabled = !mod.settings.enabled;
             mod.command.message(enabled ? 'Enabled'.clr('56B4E9') : 'Disabled'.clr('E69F00'));
+            (mod.settings.enabled) ? load() : unload();
         }
         else if(arg === "off")
         {
-            enabled = false;
-            mod.command.message(enabled ? 'Enabled'.clr('56B4E9') : 'Disabled'.clr('E69F00'));
+            mod.settings.enabled = false;
+            mod.command.message(mod.settings.enabled ? 'Enabled'.clr('56B4E9') : 'Disabled'.clr('E69F00'));
+            unload();
         }
         else if(arg === "on")
         {
-            enabled = true;
-            mod.command.message(enabled ? 'Enabled'.clr('56B4E9') : 'Disabled'.clr('E69F00'));
+            mod.settings.enabled = true;
+            mod.command.message(mod.settings.enabled ? 'Enabled'.clr('56B4E9') : 'Disabled'.clr('E69F00'));
+            load();
         }
         else if(["item", "items", "flowers"].includes(arg))
         {
             if (arg2 === "off") {
-                showItems = false;
+                mod.settings.showItems = false;
             } else if (arg2 === "on") {
-                showItems = true;
+                mod.settings.showItems = true;
             } else {
-                showItems = !showItems;
+                mod.settings.showItems = !mod.settings.showItems;
             }
-            mod.command.message('Show Items: ' + (showItems ? 'Enabled'.clr('56B4E9') : 'Disabled'.clr('E69F00')));
+            mod.command.message('Show Items: ' + (mod.settings.showItems ? 'Enabled'.clr('56B4E9') : 'Disabled'.clr('E69F00')));
         }
         else if(["notice", "notices"].includes(arg))
         {
             if (arg2 === "off") {
-                sendNotices = false;
+                mod.settings.sendNotices = false;
             } else if (arg2 === "on") {
-                sendNotices = true;
+                mod.settings.sendNotices = true;
             } else {
-                sendNotices = !sendNotices;
+                mod.settings.sendNotices = !mod.settings.sendNotices;
             }
-            mod.command.message('Use Notices: ' + (sendNotices ? 'Enabled'.clr('56B4E9') : 'Disabled'.clr('E69F00')));
+            mod.command.message('Use Notices: ' + (mod.settings.sendNotices ? 'Enabled'.clr('56B4E9') : 'Disabled'.clr('E69F00')));
         }
         else if(["lakan"].includes(arg))
         {
             if (arg2 === "off") {
-                showOnlyLakanMech = false;
+                mod.settings.showOnlyLakanMech = false;
             } else if (arg2 === "on") {
-                showOnlyLakanMech = true;
+                mod.settings.showOnlyLakanMech = true;
             } else {
-                showOnlyLakanMech = !showOnlyLakanMech;
+                mod.settings.showOnlyLakanMech = !mod.settings.showOnlyLakanMech;
             }
-            mod.command.message('Show Only Lakan Mech: ' + (showOnlyLakanMech ? 'Enabled'.clr('56B4E9') : 'Disabled'.clr('E69F00')));
+            mod.command.message('Show Only Lakan Mech: ' + (mod.settings.showOnlyLakanMech ? 'Enabled'.clr('56B4E9') : 'Disabled'.clr('E69F00')));
         }        
     });
     
@@ -168,7 +169,6 @@ module.exports = function VSGuide(mod) {
             }
             insidemap = true;
             load();
-            configInit();
         } else {
             insidemap = false;
             unload();
@@ -176,16 +176,14 @@ module.exports = function VSGuide(mod) {
     })
     
 	function sendMessage(msg) {
-        if (!enabled) return;
-        
-		if(!sendNotices) {
-			mod.command.message(msg);
-		} else {
-			mod.send('S_CHAT', 1, {
+		if(mod.settings.sendNotices) {
+			mod.send('S_CHAT', 2, {
                 channel: 21, //21 = p-notice, 1 = party
                 authorName: 'DG-Guide',
                 message: msg
 			});
+		} else {
+			mod.command.message(msg);
 		}
 	}
     
@@ -202,7 +200,7 @@ module.exports = function VSGuide(mod) {
 	}
 
 	function SpawnFlower(position, despawnDelay, collectionId){
-        if (!showItems) return;
+        if (!mod.settings.showItems) return;
         
 		mod.send('S_SPAWN_COLLECTION', 4, {
 			gameId: flowerId,
@@ -233,7 +231,14 @@ module.exports = function VSGuide(mod) {
         let spawny = bossLoc.y + radius * Math.sin(finalrad);
         return {x:spawnx,y:spawny};
 	}
-        
+    
+    // Darkan
+    function DarkanInOutRange() {
+        for (let degree = 0; degree < 360; degree += 360 / 20) {
+            SpawnFlower(SpawnLoc(degree,300), 6000, Collection_Ids[0]);
+        }
+    }
+    
     // Lakan safespots
     function BegoneRange() {
         for (let degree = 0; degree < 360; degree += 360 / 20) {
@@ -308,9 +313,7 @@ module.exports = function VSGuide(mod) {
             hook('S_ACTION_STAGE', 8, (event) => {         
                 if (!bossInfo) return;
                 if (event.stage != 0) return;
-                if (showOnlyLakanMech && ![1404, 3103, 1301, 1405, 3104, 1302].includes(event.skill.id)) return;
-                
-//                if ([1000, 2000, 3000].includes(event.templateId)) mod.command.message('skill:   ' + event.skill.id);
+                if (mod.settings.showOnlyLakanMech && ![1404, 3103, 1301, 1405, 3105, 1302].includes(event.skill.id)) return;
 
                 if (!BossActions[event.templateId]) return;
                 
@@ -319,8 +322,6 @@ module.exports = function VSGuide(mod) {
                 
                 if (bossAction) 
                 {
-					//if (!BossActions[event.templateId].enabled) return;
-					
                     bossLoc = event.loc;
                     bossLoc.w = event.w;
                     
@@ -365,23 +366,22 @@ module.exports = function VSGuide(mod) {
                 if (!bossInfo) return;
                 
                 let msgId = parseInt(event.message.replace('@dungeon:', ''));
-/*
-                if (bossInfo.templateId === 3000) {
-                    mod.command.message('msgID: ' + msgId);
-                }
-*/                
+
                 if (BossMessages[msgId]) {
                     for (let timer in timers) {
                         if (timer) clearTimeout(timer);
                     }
                     
                     if (bossInfo.templateId === 3000) {
+                        let lastNextActionBackup = lastNextAction;
                         lastNextAction = undefined;
                         isReversed = (bossHealth() < 0.5) ? true : false;
                         if (inSoulWorld) {
                             sendMessage('Next: ' + BossActions[3000][InversedAction[BossMessages[msgId]]].msg);
+                            lastNextAction = InversedAction[BossMessages[msgId]].prev;
                         } else {
                             sendMessage('Next: ' + BossActions[3000][BossMessages[msgId]].msg);
+                            lastNextAction = [BossMessages[msgId]].prev;
                         }
                     }
                 }
@@ -401,12 +401,5 @@ module.exports = function VSGuide(mod) {
 	function hook() {
 		hooks.push(mod.hook(...arguments))
 	}
-    
-    function configInit() {
-        if (config) {
-            ({enabled,sendNotices,showItems,showOnlyLakanMech} = config);
-        } else {
-            mod.command.message("(vs-guide) Error: Unable to load config.json - Using default values for now");
-        }
-    } 
+
 }
