@@ -1,9 +1,18 @@
 {
-  "files": {
-    "config.json": {
-        "overwrite": false,
-        "hash": "5fabf52fd22d377633afab96ecb45a5557e2dd6353b17b813f7b2481c0ecf6ab"
+    "files": {
+        "config.json": {
+            "overwrite": false,
+            "hash": "2365fb866558387a6aabad4e7260fdf097f0b064a25147ddcd6dcac1133ab933"
+        },
+        "index.js": "774fe961d670a23f34f4273e898513f32da3dc8830d4cd5dd02450eeb35cbb19",
+        "settings_migrator.js": "f2584b08afde6c7764d7124b96b0e9759d6ea8e1be4e174624d58228809adb7c"
     },
-    "index.js": "a1ea3ed993dec14622af9bd26e727cafaef232694b8be9b155aaf37a1635140e"
-  }
+    "defs": {
+        "S_CHAT": 2,
+        "S_SPAWN_COLLECTION": 4,
+        "S_DESPAWN_COLLECTION": 2,
+        "S_BOSS_GAGE_INFO": 3,
+        "S_ACTION_STAGE": 8,
+        "S_DUNGEON_EVENT_MESSAGE": 2
+    }
 }
