@@ -44,16 +44,14 @@ module.exports = function VSGuide(mod) {
 
     //MessageId: BossAction
     const BossMessages = {
-        // NM
-        9781043: 1404,   // Lakan has noticed you.
-        9781044: 3103,   // Lakan is trying to take you on one at a time.	
-        9781045: 1301,   // Lakan intends to kill all of you at once.
-        // HM
-        9981043: 1404,   // Lakan has noticed you.
-        9981044: 3103,   // Lakan is trying to take you on one at a time.	
-        9981045: 1301,   // Lakan intends to kill all of you at once.
+        1043: 1404,   // Lakan has noticed you.
+        1044: 3103,   // Lakan is trying to take you on one at a time.	
+        1045: 1301,   // Lakan intends to kill all of you at once.
+        1046: {msg: 'First: (Debuffs) Closest'},         // Thank you... for this release...
+        1047: {msg: 'First: (Circles) Spread'},          // Beware the... red lightning...
+        1048: {msg: 'First: (Bombs) Gather + cleanse'},  // Beware the mark... of Lakan...            
     }
-    
+        
     // Lakan stuff  
     const InversedAction = {
         1404: 1405,
@@ -62,7 +60,7 @@ module.exports = function VSGuide(mod) {
         1405: 1404,
         3105: 3103,
         1302: 1301
-    }       
+    }  
     
     const LakanNextMessageDelay = 4000;
     const ShieldWarningTime = 80000; //ms
@@ -296,7 +294,7 @@ module.exports = function VSGuide(mod) {
             hook('S_ACTION_STAGE', 8, (event) => {         
                 if (!bossInfo) return;
                 if (event.stage != 0) return;
-                if (mod.settings.showOnlyLakanMech && ![1404, 3103, 1301, 1405, 3105, 1302].includes(event.skill.id)) return;
+                if (mod.settings.showOnlyLakanMech && ![1404, 3103, 1301, 1405, 3105, 1302, 1304, 1401, 1402].includes(event.skill.id)) return;
 
                 if (!BossActions[event.templateId]) return;
                 
@@ -348,7 +346,7 @@ module.exports = function VSGuide(mod) {
             hook('S_DUNGEON_EVENT_MESSAGE', 2, (event) => {	
                 if (!bossInfo) return;
                 
-                let msgId = parseInt(event.message.replace('@dungeon:', ''));
+                let msgId = parseInt(event.message.replace('@dungeon:', '')) % 10000;
 
                 if (BossMessages[msgId]) {
                     for (let timer in timers) {
@@ -369,7 +367,14 @@ module.exports = function VSGuide(mod) {
                     }
                 }
             });
-
+            
+            hook('S_QUEST_BALLOON', 1, (event) => {	
+                let msgId = parseInt(event.message.replace('@dungeon:', '')) % 10000;
+                if (BossMessages[msgId]) {
+                    if (BossMessages[msgId].msg) sendMessage(BossMessages[msgId].msg);
+                }
+            });
+            
         }
     }
 	
