@@ -4,8 +4,8 @@
             "overwrite": false,
             "hash": "2365fb866558387a6aabad4e7260fdf097f0b064a25147ddcd6dcac1133ab933"
         },
-        "index.js": "9d944e14a2627c319a7ab48394ff0c7251928a2085ce1b1660f56003bacce550",
-        "module.json": "77e956c8e30cf6952016a738d8906300176b372a77a1a92b09eb64949e5f0299",
+        "index.js": "1393bc0dd7c235e6cb9a59f00c565dbc2d2a85c74776610221b9d653a8aa7d82",
+        "module.json": "a515c5abecb80558b76a74da6a74c7a69a5fd2b707800287cf749c304deabf57",
         "settings_migrator.js": "f2584b08afde6c7764d7124b96b0e9759d6ea8e1be4e174624d58228809adb7c"
     },
     "defs": {
@@ -14,6 +14,7 @@
         "S_DESPAWN_COLLECTION": 2,
         "S_BOSS_GAGE_INFO": 3,
         "S_ACTION_STAGE": 8,
-        "S_DUNGEON_EVENT_MESSAGE": 2
+        "S_DUNGEON_EVENT_MESSAGE": 2,
+        "S_QUEST_BALLOON": 1
     }
 }
